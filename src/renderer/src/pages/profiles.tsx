@@ -99,7 +99,7 @@ const Profiles: React.FC = () => {
               </div>
             </div>
           ),
-          icon: sub.icon ? <img src={sub.icon} className="h-[18px] w-[18px]" /> : null,
+          icon: sub.icon ? <img src={sub.icon} className="h-4.5 w-4.5" /> : null,
           divider: index === subs.length - 1 && Boolean(collections) && collections.length > 0
         })
       })
@@ -122,7 +122,7 @@ const Profiles: React.FC = () => {
               </div>
             </div>
           ),
-          icon: sub.icon ? <img src={sub.icon} className="h-[18px] w-[18px]" /> : null,
+          icon: sub.icon ? <img src={sub.icon} className="h-4.5 w-4.5" /> : null,
           divider: false
         })
       })

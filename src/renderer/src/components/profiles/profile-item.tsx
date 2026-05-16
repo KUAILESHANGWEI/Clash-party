@@ -22,6 +22,7 @@ import { useAppConfig } from '@renderer/hooks/use-app-config'
 import { useTranslation } from 'react-i18next'
 import BaseConfirmModal from '../base/base-confirm-modal'
 import EditRulesModal from './edit-rules-modal'
+import EditTunnelsModal from './edit-tunnels-modal'
 import EditInfoModal from './edit-info-modal'
 import EditFileModal from './edit-file-modal'
 import QrCodeModal from './qr-code-modal'
@@ -63,6 +64,7 @@ const ProfileItem: React.FC<Props> = (props) => {
   const [openInfoEditor, setOpenInfoEditor] = useState(false)
   const [openFileEditor, setOpenFileEditor] = useState(false)
   const [openRulesEditor, setOpenRulesEditor] = useState(false)
+  const [openTunnelsEditor, setOpenTunnelsEditor] = useState(false)
   const [openQrCode, setOpenQrCode] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -99,6 +101,13 @@ const ProfileItem: React.FC<Props> = (props) => {
       {
         key: 'edit-rules',
         label: t('profiles.editRules.title'),
+        showDivider: false,
+        color: 'default',
+        className: ''
+      } as MenuItem,
+      {
+        key: 'edit-tunnels',
+        label: t('profiles.editTunnels.title'),
         showDivider: false,
         color: 'default',
         className: ''
@@ -151,6 +160,10 @@ const ProfileItem: React.FC<Props> = (props) => {
       }
       case 'edit-rules': {
         setOpenRulesEditor(true)
+        break
+      }
+      case 'edit-tunnels': {
+        setOpenTunnelsEditor(true)
         break
       }
       case 'open-file': {
@@ -231,6 +244,9 @@ const ProfileItem: React.FC<Props> = (props) => {
     >
       {openFileEditor && <EditFileModal id={info.id} onClose={() => setOpenFileEditor(false)} />}
       {openRulesEditor && <EditRulesModal id={info.id} onClose={() => setOpenRulesEditor(false)} />}
+      {openTunnelsEditor && (
+        <EditTunnelsModal id={info.id} onClose={() => setOpenTunnelsEditor(false)} />
+      )}
       {openQrCode && info.url && (
         <QrCodeModal url={info.url} onClose={() => setOpenQrCode(false)} />
       )}
