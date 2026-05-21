@@ -4,7 +4,7 @@
   "description": "Clash Party",
   "type": "module",
   "main": "./out/main/index.js",
-  "author": "mihomo-party-org",
+  "author": "KUAILESHANGWEI",
   "homepage": "https://clashparty.org",
   "scripts": {
     "format": "prettier --write .",

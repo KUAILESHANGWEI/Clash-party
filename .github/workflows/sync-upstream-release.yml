@@ -1,0 +1,26 @@
+name: Sync Upstream Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Mirror latest upstream release assets
+        env:
+          SYNC_GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          UPSTREAM_REPOSITORY: mihomo-party-org/clash-party
+          TARGET_REPOSITORY: KUAILESHANGWEI/clash-party
+        run: node scripts/sync-upstream-release-assets.mjs

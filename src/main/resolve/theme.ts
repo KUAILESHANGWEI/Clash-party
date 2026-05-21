@@ -11,6 +11,7 @@ import { floatingWindow } from './floatingWindow'
 
 let insertedCSSKeyMain: string | undefined = undefined
 let insertedCSSKeyFloating: string | undefined = undefined
+const VENDOR_URL_PREFIX = 'https://github.com/KUAILESHANGWEI/clash-party/releases/download/vendor'
 
 export async function resolveThemes(): Promise<{ key: string; label: string }[]> {
   const files = await readdir(themesDir())
@@ -34,7 +35,7 @@ export async function resolveThemes(): Promise<{ key: string; label: string }[]>
 }
 
 export async function fetchThemes(): Promise<void> {
-  const zipUrl = 'https://github.com/mihomo-party-org/theme-hub/releases/download/latest/themes.zip'
+  const zipUrl = `${VENDOR_URL_PREFIX}/themes.zip`
   const { 'mixed-port': mixedPort = 7890 } = await getControledMihomoConfig()
   const zipData = await chromeRequest.get(zipUrl, {
     responseType: 'arraybuffer',

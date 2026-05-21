@@ -7,6 +7,7 @@ import { execSync } from 'child_process'
 
 const cwd = process.cwd()
 const TEMP_DIR = path.join(cwd, 'node_modules/.temp')
+const VENDOR_URL_PREFIX = 'https://github.com/KUAILESHANGWEI/clash-party/releases/download/vendor'
 let arch = process.arch
 const platform = process.platform
 if (process.argv.slice(2).length !== 0) {
@@ -15,8 +16,8 @@ if (process.argv.slice(2).length !== 0) {
 
 /* ======= mihomo alpha======= */
 const MIHOMO_ALPHA_VERSION_URL =
-  'https://github.com/MetaCubeX/mihomo/releases/download/Prerelease-Alpha/version.txt'
-const MIHOMO_ALPHA_URL_PREFIX = `https://github.com/MetaCubeX/mihomo/releases/download/Prerelease-Alpha`
+  `${VENDOR_URL_PREFIX}/mihomo-alpha-version.txt`
+const MIHOMO_ALPHA_URL_PREFIX = VENDOR_URL_PREFIX
 let MIHOMO_ALPHA_VERSION
 
 const MIHOMO_ALPHA_MAP = {
@@ -46,8 +47,8 @@ async function getLatestAlphaVersion() {
 
 /* ======= mihomo smart ======= */
 const MIHOMO_SMART_VERSION_URL =
-  'https://github.com/vernesong/mihomo/releases/download/Prerelease-Alpha/version.txt'
-const MIHOMO_SMART_URL_PREFIX = `https://github.com/vernesong/mihomo/releases/download/Prerelease-Alpha`
+  `${VENDOR_URL_PREFIX}/mihomo-smart-version.txt`
+const MIHOMO_SMART_URL_PREFIX = VENDOR_URL_PREFIX
 let MIHOMO_SMART_VERSION
 
 const MIHOMO_SMART_MAP = {
@@ -75,9 +76,8 @@ async function getLatestSmartVersion() {
 }
 
 /* ======= mihomo release ======= */
-const MIHOMO_VERSION_URL =
-  'https://github.com/MetaCubeX/mihomo/releases/latest/download/version.txt'
-const MIHOMO_URL_PREFIX = `https://github.com/MetaCubeX/mihomo/releases/download`
+const MIHOMO_VERSION_URL = `${VENDOR_URL_PREFIX}/mihomo-version.txt`
+const MIHOMO_URL_PREFIX = VENDOR_URL_PREFIX
 let MIHOMO_VERSION
 
 const MIHOMO_MAP = {
@@ -144,7 +144,7 @@ function mihomo() {
   const name = MIHOMO_MAP[`${platform}-${arch}`]
   const isWin = platform === 'win32'
   const urlExt = isWin ? 'zip' : 'gz'
-  const downloadURL = `${MIHOMO_URL_PREFIX}/${MIHOMO_VERSION}/${name}-${MIHOMO_VERSION}.${urlExt}`
+  const downloadURL = `${MIHOMO_URL_PREFIX}/${name}-${MIHOMO_VERSION}.${urlExt}`
   const exeFile = `${name}${isWin ? '.exe' : ''}`
   const zipFile = `${name}-${MIHOMO_VERSION}.${urlExt}`
 
@@ -289,36 +289,36 @@ async function downloadFile(url, path) {
 const resolveMmdb = () =>
   resolveResource({
     file: 'country.mmdb',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb`
+    downloadURL: `${VENDOR_URL_PREFIX}/country-lite.mmdb`
   })
 const resolveMetadb = () =>
   resolveResource({
     file: 'geoip.metadb',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb`
+    downloadURL: `${VENDOR_URL_PREFIX}/geoip.metadb`
   })
 const resolveGeosite = () =>
   resolveResource({
     file: 'geosite.dat',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat`
+    downloadURL: `${VENDOR_URL_PREFIX}/geosite.dat`
   })
 const resolveGeoIP = () =>
   resolveResource({
     file: 'geoip.dat',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat`
+    downloadURL: `${VENDOR_URL_PREFIX}/geoip.dat`
   })
 const resolveASN = () =>
   resolveResource({
     file: 'ASN.mmdb',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb`
+    downloadURL: `${VENDOR_URL_PREFIX}/GeoLite2-ASN.mmdb`
   })
 const resolveEnableLoopback = () =>
   resolveResource({
     file: 'enableLoopback.exe',
-    downloadURL: `https://github.com/Kuingsmile/uwp-tool/releases/download/latest/enableLoopback.exe`
+    downloadURL: `${VENDOR_URL_PREFIX}/enableLoopback.exe`
   })
 /* ======= sysproxy-rs ======= */
 const SYSPROXY_RS_VERSION = 'v0.1.0'
-const SYSPROXY_RS_URL_PREFIX = `https://github.com/mihomo-party-org/sysproxy-rs-opti/releases/download/${SYSPROXY_RS_VERSION}`
+const SYSPROXY_RS_URL_PREFIX = VENDOR_URL_PREFIX
 
 function getSysproxyNodeName() {
   // 检测是否为 musl 系统（与 src/native/sysproxy/index.js 保持一致）
@@ -390,7 +390,7 @@ const resolveMonitor = async () => {
     fs.mkdirSync(tempDir, { recursive: true })
   }
   await downloadFile(
-    `https://github.com/mihomo-party-org/mihomo-party-run/releases/download/monitor/${arch}.zip`,
+    `${VENDOR_URL_PREFIX}/monitor-${arch}.zip`,
     tempZip
   )
   const zip = new AdmZip(tempZip)
@@ -407,18 +407,17 @@ const resolveMonitor = async () => {
 const resolve7zip = () =>
   resolveResource({
     file: '7za.exe',
-    downloadURL: `https://github.com/develar/7zip-bin/raw/master/win/${arch}/7za.exe`
+    downloadURL: `${VENDOR_URL_PREFIX}/7za-${arch}.exe`
   })
 const resolveSubstore = () =>
   resolveResource({
     file: 'sub-store.bundle.cjs',
-    downloadURL:
-      'https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store.bundle.js'
+    downloadURL: `${VENDOR_URL_PREFIX}/sub-store.bundle.js`
   })
 const resolveHelper = () =>
   resolveResource({
     file: 'party.mihomo.helper',
-    downloadURL: `https://github.com/mihomo-party-org/mihomo-party-helper/releases/download/${arch}/party.mihomo.helper`
+    downloadURL: `${VENDOR_URL_PREFIX}/party.mihomo.helper-${arch}`
   })
 const resolveSubstoreFrontend = async () => {
   const tempDir = path.join(TEMP_DIR, 'substore-frontend')
@@ -427,7 +426,7 @@ const resolveSubstoreFrontend = async () => {
     fs.mkdirSync(tempDir, { recursive: true })
   }
   await downloadFile(
-    'https://github.com/sub-store-org/Sub-Store-Front-End/releases/latest/download/dist.zip',
+    `${VENDOR_URL_PREFIX}/sub-store-frontend-dist.zip`,
     tempZip
   )
   const zip = new AdmZip(tempZip)
@@ -448,7 +447,7 @@ const resolveFont = async () => {
     return
   }
   await downloadFile(
-    'https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf',
+    `${VENDOR_URL_PREFIX}/NotoColorEmoji.ttf`,
     targetPath
   )
 

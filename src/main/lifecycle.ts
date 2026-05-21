@@ -48,8 +48,6 @@ export function setupPlatformSpecifics(): void {
     app.relaunch = customRelaunch
   }
 
-  // https://github.com/electron/electron/issues/43278
-  // https://github.com/electron/electron/issues/36698
   const electronMajor = parseInt(process.versions.electron.split('.')[0], 10) || 0
   if (process.platform === 'win32' && !exePath().startsWith('C') && electronMajor < 38) {
     app.commandLine.appendSwitch('in-process-gpu')

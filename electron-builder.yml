@@ -70,7 +70,7 @@ linux:
   target:
     - deb
     - rpm
-  maintainer: mihomo-party-org
+  maintainer: KUAILESHANGWEI
   category: Utility
   artifactName: clash-party-linux-${version}-${arch}.${ext}
 deb:

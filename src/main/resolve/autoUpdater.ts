@@ -45,7 +45,7 @@ export async function checkUpdate(): Promise<IAppVersion | undefined> {
     getAppConfig()
   ])
   const githubUrl =
-    'https://github.com/mihomo-party-org/mihomo-party/releases/latest/download/latest.yml'
+    'https://github.com/KUAILESHANGWEI/clash-party/releases/latest/download/latest.yml'
   const res = await tryDownload(buildDownloadUrls(githubUrl, githubProxy), {
     headers: { 'Content-Type': 'application/octet-stream' },
     proxy: { protocol: 'http', host: '127.0.0.1', port: mixedPort },
@@ -83,7 +83,7 @@ export async function downloadAndInstallUpdate(version: string): Promise<void> {
     getControledMihomoConfig(),
     getAppConfig()
   ])
-  const githubBase = `https://github.com/mihomo-party-org/mihomo-party/releases/download/v${version}/`
+  const githubBase = `https://github.com/KUAILESHANGWEI/clash-party/releases/download/v${version}/`
   const fileMap = {
     'win32-x64': `clash-party-windows-${version}-x64-setup.exe`,
     'win32-ia32': `clash-party-windows-${version}-ia32-setup.exe`,

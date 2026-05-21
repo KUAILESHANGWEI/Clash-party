@@ -12,6 +12,7 @@ import * as chromeRequest from './chromeRequest'
 import { createLogger } from './logger'
 
 const log = createLogger('GitHub')
+const VENDOR_URL_PREFIX = 'https://github.com/KUAILESHANGWEI/clash-party/releases/download/vendor'
 
 const GITHUB_PROXIES = ['https://gh-proxy.org', 'https://ghfast.top', 'https://down.clashparty.org']
 
@@ -169,7 +170,7 @@ export async function installMihomoCore(version: string): Promise<void> {
 
     const isWin = plat === 'win32'
     const urlExt = isWin ? 'zip' : 'gz'
-    const downloadURL = `https://github.com/MetaCubeX/mihomo/releases/download/${version}/${name}-${version}.${urlExt}`
+    const downloadURL = `${VENDOR_URL_PREFIX}/${name}-${version}.${urlExt}`
 
     const coreDir = mihomoCoreDir()
     const tempZip = join(coreDir, `temp-core.${urlExt}`)

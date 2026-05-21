@@ -164,7 +164,7 @@ const Override: React.FC = () => {
             variant="light"
             size="sm"
             onPress={() => {
-              open('https://github.com/mihomo-party-org/override-hub')
+              open('https://github.com/KUAILESHANGWEI/clash-party')
             }}
           >
             <RiArchiveLine className="text-lg" />

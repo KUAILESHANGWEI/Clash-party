@@ -63,9 +63,9 @@ export function getProcessedVersion() {
 // 生成下载URL
 export function getDownloadUrl(isDev, version) {
   if (isDev) {
-    return 'https://github.com/mihomo-party-org/clash-party/releases/download/dev'
+    return 'https://github.com/KUAILESHANGWEI/clash-party/releases/download/dev'
   } else {
-    return `https://github.com/mihomo-party-org/clash-party/releases/download/v${version}`
+    return `https://github.com/KUAILESHANGWEI/clash-party/releases/download/v${version}`
   }
 }
 

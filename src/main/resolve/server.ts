@@ -14,6 +14,8 @@ import { getAppConfig, getControledMihomoConfig } from '../config'
 import { systemLogger } from '../utils/logger'
 import { createCappedLogWritableStream } from '../utils/logFile'
 
+const VENDOR_URL_PREFIX = 'https://github.com/KUAILESHANGWEI/clash-party/releases/download/vendor'
+
 export let pacPort: number
 export let subStorePort: number
 export let subStoreFrontendPort: number
@@ -161,7 +163,7 @@ export async function downloadSubStore(): Promise<void> {
     // 下载后端文件
     const tempBackendPath = path.join(tempDir, 'sub-store.bundle.cjs')
     const backendRes = await chromeRequest.get(
-      'https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store.bundle.js',
+      `${VENDOR_URL_PREFIX}/sub-store.bundle.js`,
       {
         responseType: 'arraybuffer',
         headers: { 'Content-Type': 'application/octet-stream' },
@@ -175,7 +177,7 @@ export async function downloadSubStore(): Promise<void> {
     await writeFile(tempBackendPath, Buffer.from(backendRes.data as Buffer))
     // 下载前端文件
     const frontendRes = await chromeRequest.get(
-      'https://github.com/sub-store-org/Sub-Store-Front-End/releases/latest/download/dist.zip',
+      `${VENDOR_URL_PREFIX}/sub-store-frontend-dist.zip`,
       {
         responseType: 'arraybuffer',
         headers: { 'Content-Type': 'application/octet-stream' },

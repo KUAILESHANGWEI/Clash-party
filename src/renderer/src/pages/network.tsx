@@ -116,7 +116,7 @@ interface LatencyTarget {
 const DEFAULT_LATENCY_TARGETS: LatencyTarget[] = [
   { name: 'Google', url: 'https://www.google.com/generate_204' },
   { name: 'Cloudflare', url: 'https://www.cloudflare.com/cdn-cgi/trace' },
-  { name: 'GitHub', url: 'https://github.com/' }
+  { name: 'GitHub', url: 'https://github.com/KUAILESHANGWEI/clash-party' }
 ]
 
 function normalizeLatencyUrl(value: string): string | null {
