@@ -1,5 +1,5 @@
 import { createReadStream } from 'fs'
-import { mkdir, rm, writeFile } from 'fs/promises'
+import { copyFile, mkdir, rm, writeFile } from 'fs/promises'
 import path from 'path'
 
 const token = process.env.SYNC_GITHUB_TOKEN || process.env.GITHUB_TOKEN
@@ -139,7 +139,9 @@ async function mirrorAssets(release, assets) {
       await deleteAsset(existing)
     }
     const filePath = path.join(workDir, asset.name)
-    if (asset.apiAsset) {
+    if (asset.localPath) {
+      await copyFile(asset.localPath, filePath)
+    } else if (asset.apiAsset) {
       await downloadAsset(asset.apiAsset, filePath)
     } else {
       await downloadUrl(asset.url, filePath)
@@ -278,14 +280,21 @@ try {
   target = target ? await updateRelease(targetRepository, target, latest) : await createRelease(targetRepository, latest)
   await mirrorAssets(
     target,
-    (latest.assets || []).map((apiAsset) => ({ name: apiAsset.name, apiAsset }))
+    [
+      ...(latest.assets || []).map((apiAsset) => ({ name: apiAsset.name, apiAsset })),
+      {
+        name: 'install.sh',
+        localPath: path.join(process.cwd(), 'install.sh'),
+        content_type: 'application/x-sh'
+      }
+    ]
   )
   const vendorRelease = await ensureRelease(
     targetRepository,
     vendorTag,
     'Vendor assets mirror',
     'Mirrored build and runtime vendor assets used by this isolated repository.',
-    false
+    true
   )
   await mirrorAssets(vendorRelease, await vendorAssets())
   console.log(`Release ${latest.tag_name} is mirrored to ${targetRepository}`)
