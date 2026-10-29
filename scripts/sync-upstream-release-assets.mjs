@@ -130,25 +130,65 @@ async function uploadAsset(release, asset, filePath) {
   })
 }
 
+async function listAssets(release) {
+  const all = []
+  for (let page = 1; ; page++) {
+    const part = await ghJson(`https://api.github.com/repos/${targetRepository}/releases/${release.id}/assets?per_page=100&page=${page}`)
+    all.push(...part)
+    if (part.length < 100) return all
+  }
+}
+
+function versionGroup(name) {
+  const match = name.match(/^mihomo-.*-(alpha-smart-[0-9a-f]+|alpha-[0-9a-f]+|v[0-9][0-9a-zA-Z._-]*)\.(?:gz|zip)$/)
+  return match?.[1]
+}
+
 async function mirrorAssets(release, assets) {
-  const currentRelease = await getReleaseByTag(targetRepository, release.tag_name)
-  const existingByName = new Map((currentRelease?.assets || []).map((asset) => [asset.name, asset]))
+  const vendor = release.tag_name === vendorTag
+  let existing = await listAssets(release)
+  let existingByName = new Map(existing.map((asset) => [asset.name, asset]))
+  // Stage every file before removing anything, and publish version markers last.
   for (const asset of assets) {
-    const existing = existingByName.get(asset.name)
-    if (existing) {
-      await deleteAsset(existing)
-    }
     const filePath = path.join(workDir, asset.name)
-    if (asset.localPath) {
-      await copyFile(asset.localPath, filePath)
-    } else if (asset.apiAsset) {
-      await downloadAsset(asset.apiAsset, filePath)
-    } else {
-      await downloadUrl(asset.url, filePath)
+    if (asset.localPath) await copyFile(asset.localPath, filePath)
+    else if (asset.apiAsset) await downloadAsset(asset.apiAsset, filePath)
+    else await downloadUrl(asset.url, filePath)
+  }
+  const markers = new Set(['mihomo-alpha-version.txt', 'mihomo-smart-version.txt', 'mihomo-version.txt'])
+  const ordered = [...assets.filter(a => !markers.has(a.name)), ...assets.filter(a => markers.has(a.name))]
+  let obsolete = []
+  if (vendor) {
+    const desired = new Set(assets.map(a => versionGroup(a.name)).filter(Boolean))
+    const groups = new Map()
+    for (const asset of existing) {
+      const v = versionGroup(asset.name)
+      if (v && (!groups.has(v) || groups.get(v) < asset.created_at)) groups.set(v, asset.created_at)
     }
-    await uploadAsset(release, asset.apiAsset || asset, filePath)
+    for (const category of ['smart', 'alpha', 'stable']) {
+      const versions = [...groups].filter(([v]) => category === 'smart' ? v.startsWith('alpha-smart-') : category === 'alpha' ? v.startsWith('alpha-') && !v.startsWith('alpha-smart-') : v.startsWith('v'))
+        .sort((a, b) => b[1].localeCompare(a[1]))
+      for (const [version] of versions.slice(0, 2)) desired.add(version)
+    }
+    obsolete = existing.filter(a => versionGroup(a.name) && !desired.has(versionGroup(a.name)))
+    const missing = assets.filter(a => !existingByName.has(a.name)).length
+    while (existing.length + missing > 1000 && obsolete.length) {
+      const asset = obsolete.shift()
+      await deleteAsset(asset)
+      existing = existing.filter(a => a.id !== asset.id)
+      existingByName.delete(asset.name)
+    }
+    if (existing.length + missing > 1000) throw new Error('Insufficient release space without deleting protected assets')
+  }
+  for (const asset of ordered) {
+    const prior = existingByName.get(asset.name)
+    // Versioned filenames are immutable; retain already-published packages.
+    if (prior && versionGroup(asset.name) && prior.size === (await import('fs')).statSync(path.join(workDir, asset.name)).size) continue
+    if (prior) await deleteAsset(prior)
+    await uploadAsset(release, asset.apiAsset || asset, path.join(workDir, asset.name))
     console.log(`mirrored ${asset.name}`)
   }
+  for (const asset of obsolete) await deleteAsset(asset)
 }
 
 async function text(url) {
