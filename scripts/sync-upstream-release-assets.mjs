@@ -148,15 +148,20 @@ async function mirrorAssets(release, assets) {
   const vendor = release.tag_name === vendorTag
   let existing = await listAssets(release)
   let existingByName = new Map(existing.map((asset) => [asset.name, asset]))
+  // Published upstream assets with matching digest and size need no download or replacement.
+  const pending = assets.filter(asset => {
+    const prior = existingByName.get(asset.name)
+    return !(prior && asset.apiAsset && prior.size === asset.apiAsset.size && prior.digest && prior.digest === asset.apiAsset.digest)
+  })
   // Stage every file before removing anything, and publish version markers last.
-  for (const asset of assets) {
+  for (const asset of pending) {
     const filePath = path.join(workDir, asset.name)
     if (asset.localPath) await copyFile(asset.localPath, filePath)
     else if (asset.apiAsset) await downloadAsset(asset.apiAsset, filePath)
     else await downloadUrl(asset.url, filePath)
   }
   const markers = new Set(['mihomo-alpha-version.txt', 'mihomo-smart-version.txt', 'mihomo-version.txt'])
-  const ordered = [...assets.filter(a => !markers.has(a.name)), ...assets.filter(a => markers.has(a.name))]
+  const ordered = [...pending.filter(a => !markers.has(a.name)), ...pending.filter(a => markers.has(a.name))]
   let obsolete = []
   if (vendor) {
     const desired = new Set(assets.map(a => versionGroup(a.name)).filter(Boolean))
@@ -171,7 +176,7 @@ async function mirrorAssets(release, assets) {
       for (const [version] of versions.slice(0, 2)) desired.add(version)
     }
     obsolete = existing.filter(a => versionGroup(a.name) && !desired.has(versionGroup(a.name)))
-    const missing = assets.filter(a => !existingByName.has(a.name)).length
+    const missing = pending.filter(a => !existingByName.has(a.name)).length
     while (existing.length + missing > 1000 && obsolete.length) {
       const asset = obsolete.shift()
       await deleteAsset(asset)
