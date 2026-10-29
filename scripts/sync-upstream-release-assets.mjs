@@ -151,6 +151,11 @@ async function mirrorAssets(release, assets) {
   // Published upstream assets with matching digest and size need no download or replacement.
   const pending = assets.filter(asset => {
     const prior = existingByName.get(asset.name)
+    // The original Noto font source is unavailable; preserve the existing mirror.
+    if (prior && asset.name === 'NotoColorEmoji.ttf') {
+      console.log('Keeping existing NotoColorEmoji.ttf mirror')
+      return false
+    }
     return !(prior && asset.apiAsset && prior.size === asset.apiAsset.size && prior.digest && prior.digest === asset.apiAsset.digest)
   })
   // Stage every file before removing anything, and publish version markers last.
